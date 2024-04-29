@@ -51,7 +51,7 @@ class Generator:
         self.code.append('\n')
 
     def comment(self, txt):
-        self.code.append(f'### {txt}\n')
+        self.code.append(f'# {txt}\n')
 
     def variable_data(self, name, type, value):
         self.data.append(f'{name}: .{type} {value}\n')

@@ -28,14 +28,13 @@ class Ast:
     def get_errors(self):
         return self.errors
     
-    def set_symbols(self, id, symbol_type, data_type, scope, line):
-        if data_type in ['NUMBER', 'FLOAT', 'STRING', 'BOOLEAN', 'CHAR', 'ARRAY', 'NULL']:
-            data_type = data_type.lower()
+    def set_symbols(self, id, symbol_type, data_type, scope, position, line):
         self.symbols.append({
             'id': id,
             'symbolType': symbol_type,
             'dataType': data_type,
             'scope': scope,
+            'position': position,
             'line': line
         })
 

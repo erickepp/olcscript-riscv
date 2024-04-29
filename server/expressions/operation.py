@@ -74,123 +74,123 @@ class Operation(Expression):
                     gen.add_operation('add', 't0', 't1', 't2')
                     gen.add_li('t3', temp)
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, dominant_type)
+                    return Value(str(temp), dominant_type)
                 elif dominant_type == ExpressionType.FLOAT:
                     name_id = f'float_{temp}'
                     gen.variable_data(name_id, 'float', '0.0')
                     gen.add_operation('fadd.s', 'fa0', 'fa1', 'fa2')
                     gen.add_fsw('fa0', name_id, 't0')
-                    return Value(name_id, False, dominant_type) 
+                    return Value(name_id, dominant_type) 
                 
             elif self.operador == '-':
                 if dominant_type == ExpressionType.NUMBER:
                     gen.add_operation('sub', 't0', 't1', 't2')
                     gen.add_li('t3', temp)
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, dominant_type)
+                    return Value(str(temp), dominant_type)
                 elif dominant_type == ExpressionType.FLOAT:
                     name_id = f'float_{temp}'
                     gen.variable_data(name_id, 'float', '0.0')
                     gen.add_operation('fsub.s', 'fa0', 'fa1', 'fa2')
                     gen.add_fsw('fa0', name_id, 't0')
-                    return Value(name_id, False, dominant_type)            
+                    return Value(name_id, dominant_type)            
                 ast.set_errors('Tipos incorrectos para aplicar el operador resta (-).',
                                self.line, self.col, 'Semántico')
-                return Value('', False, ExpressionType.NULL)
+                return Value('', ExpressionType.NULL)
             
             elif self.operador == '*':
                 if dominant_type == ExpressionType.NUMBER:
                     gen.add_operation('mul', 't0', 't1', 't2')
                     gen.add_li('t3', temp)
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, dominant_type)
+                    return Value(str(temp), dominant_type)
                 elif dominant_type == ExpressionType.FLOAT:
                     name_id = f'float_{temp}'
                     gen.variable_data(name_id, 'float', '0.0')
                     gen.add_operation('fmul.s', 'fa0', 'fa1', 'fa2')
                     gen.add_fsw('fa0', name_id, 't0')
-                    return Value(name_id, False, dominant_type)           
+                    return Value(name_id, dominant_type)           
                 ast.set_errors('Tipos incorrectos para aplicar el operador multiplicación (*).',
                                self.line, self.col, 'Semántico')
-                return Value('', False, ExpressionType.NULL)
+                return Value('', ExpressionType.NULL)
             
             elif self.operador == '/':
                 if dominant_type == ExpressionType.NUMBER:
                     gen.add_operation('div', 't0', 't1', 't2')
                     gen.add_li('t3', temp)
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, dominant_type)
+                    return Value(str(temp), dominant_type)
                 elif dominant_type == ExpressionType.FLOAT:
                     name_id = f'float_{temp}'
                     gen.variable_data(name_id, 'float', '0.0')
                     gen.add_operation('fdiv.s', 'fa0', 'fa1', 'fa2')
                     gen.add_fsw('fa0', name_id, 't0')
-                    return Value(name_id, False, dominant_type)     
+                    return Value(name_id, dominant_type)     
                 ast.set_errors('Tipos incorrectos para aplicar el operador división (/).',
                                self.line, self.col, 'Semántico')
-                return Value('', False, ExpressionType.NULL)
+                return Value('', ExpressionType.NULL)
             
             elif self.operador == '%':
                 if dominant_type == ExpressionType.NUMBER:
                     gen.add_operation('rem', 't0', 't1', 't2')
                     gen.add_li('t3', temp)
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, dominant_type)
+                    return Value(str(temp), dominant_type)
                 ast.set_errors('Tipos incorrectos para aplicar el operador módulo (%).',
                                self.line, self.col, 'Semántico')
-                return Value('', False, ExpressionType.NULL)
+                return Value('', ExpressionType.NULL)
             
             elif self.operador == '==':
                 gen.add_operation('xor', 't0', 't1', 't2')
                 gen.add_seqz('t0', 't0')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '!=':
                 gen.add_operation('xor', 't0', 't1', 't2')
                 gen.add_snez('t0', 't0')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '>':
                 gen.add_operation('slt', 't0', 't2', 't1')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '>=':
                 gen.add_operation('slt', 't0', 't1', 't2')
                 gen.add_operation('xori', 't0', 't0', '1')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '<':
                 gen.add_operation('slt', 't0', 't1', 't2')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '<=':
                 gen.add_operation('slt', 't0', 't2', 't1')
                 gen.add_operation('xori', 't0', 't0', '1')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '&&':
                 gen.add_operation('and', 't0', 't1', 't2')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
             
             elif self.operador == '||':
                 gen.add_operation('or', 't0', 't1', 't2')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, dominant_type)
+                return Value(str(temp), dominant_type)
 
         elif op1.type != ExpressionType.NULL and op2.type == ExpressionType.NULL:
             if op1.type in [ExpressionType.NUMBER, ExpressionType.BOOLEAN]:
@@ -208,24 +208,24 @@ class Operation(Expression):
                     gen.add_neg('t0', 't1')
                     gen.add_li('t3', temp) 
                     gen.add_sw('t0', '0(t3)')
-                    return Value(str(temp), True, op1.type)
+                    return Value(str(temp), op1.type)
                 elif op1.type == ExpressionType.FLOAT:
                     name_id = f'float_{temp}'
                     gen.variable_data(name_id, 'float', '0.0')
                     gen.add_fneg_s('fa0', 'fa1')
                     gen.add_fsw('fa0', name_id, 't0')
-                    return Value(name_id, False, op1.type)
+                    return Value(name_id, op1.type)
                 
             elif self.operador == '!' and op1.type == ExpressionType.BOOLEAN:
                 gen.add_operation('xori', 't0', 't1', '1')
                 gen.add_li('t3', temp)
                 gen.add_sw('t0', '0(t3)')
-                return Value(str(temp), True, op1.type)
+                return Value(str(temp), op1.type)
             
             ast.set_errors(f'Tipo incorrecto para aplicar el operador ({self.operador}).',
                            self.line, self.col, 'Semántico')
-            return Value('', False, ExpressionType.NULL)
+            return Value('', ExpressionType.NULL)
  
         ast.set_errors(f'Tipos incorrectos para aplicar el operador ({self.operador}).',
                        self.line, self.col, 'Semántico')
-        return Value('', False, ExpressionType.NULL)
+        return Value('', ExpressionType.NULL)

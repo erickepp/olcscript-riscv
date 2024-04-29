@@ -9,6 +9,7 @@ function SymbolTable() {
       <td>{symbol.symbolType}</td>
       <td>{symbol.dataType}</td>
       <td>{symbol.scope}</td>
+      <td>{symbol.position}</td>
       <td>{symbol.line}</td>
     </tr>
   ));
@@ -28,6 +29,7 @@ function SymbolTable() {
             <th scope="col">Tipo símbolo</th>
             <th scope="col">Tipo dato</th>
             <th scope="col">Ámbito</th>
+            <th scope="col">Posición</th>
             <th scope="col">Línea</th>
           </tr>
         </thead>
