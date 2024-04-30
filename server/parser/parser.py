@@ -15,6 +15,7 @@ from instructions.declaration import Declaration
 from instructions.assignment import Assignment
 from instructions.array_declaration import ArrayDeclaration
 from instructions.push import Push
+from instructions.if_instruction import If
 from instructions.console_log import ConsoleLog
 
 class codeParams:
@@ -312,6 +313,31 @@ def p_expresion_acceso(p):
         p[0] = ArrayAccess(params.line, params.column, p[1], p[3])
     else:
         p[0] = Access(params.line, params.column, p[1])
+
+
+def p_instruccion_if(p):
+    'instruccion : IF PARIZQ expresion PARDER LLAVIZQ instrucciones LLAVDER lista_else_if else'
+    params = get_params(p)
+    p[0] = If(params.line, params.column, p[3], p[6], p[8], p[9])
+
+
+def p_lista_else_if(p):
+    '''lista_else_if : lista_else_if ELSE IF PARIZQ expresion PARDER LLAVIZQ instrucciones LLAVDER
+                     |'''
+    if len(p) > 1:
+        p[1].append({'expression': p[5], 'block': p[8]})
+        p[0] = p[1]
+    else:
+        p[0] = []
+
+
+def p_else(p):
+    '''else : ELSE LLAVIZQ instrucciones LLAVDER
+            |'''
+    if len(p) > 1:
+        p[0] = p[3]
+    else:
+        p[0] = None
 
 
 def p_instruccion_console_log(p):
