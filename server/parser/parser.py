@@ -7,10 +7,14 @@ from expressions.operation import Operation
 from expressions.access import Access
 from expressions.array import Array
 from expressions.array_access import ArrayAccess
+from expressions.pop import Pop
+from expressions.index_of import IndexOf
+from expressions.length import Length
 
 from instructions.declaration import Declaration
 from instructions.assignment import Assignment
 from instructions.array_declaration import ArrayDeclaration
+from instructions.push import Push
 from instructions.console_log import ConsoleLog
 
 class codeParams:
@@ -42,7 +46,6 @@ reserved = {
     'push': 'PUSH',
     'pop': 'POP',
     'indexOf': 'INDEXOF',
-    'join': 'JOIN',
     'length': 'LENGTH',
     'function': 'FUNCTION',
     'return': 'RETURN',
@@ -275,6 +278,30 @@ def p_expresion_array(p):
         p[0] = Array(params.line, params.column, p[2])
     else:
         p[0] = Array(params.line, params.column, [])
+
+
+def p_instruccion_push(p):
+    'instruccion : expresion PUNTO PUSH PARIZQ expresion PARDER PTCOMA'
+    params = get_params(p)
+    p[0] = Push(params.line, params.column, p[1], p[5])
+
+
+def p_expresion_pop(p):
+    'expresion : expresion PUNTO POP PARIZQ PARDER'
+    params = get_params(p)
+    p[0] = Pop(params.line, params.column, p[1])
+
+
+def p_expresion_index_of(p):
+    'expresion : expresion PUNTO INDEXOF PARIZQ expresion PARDER'
+    params = get_params(p)
+    p[0] = IndexOf(params.line, params.column, p[1], p[5])
+
+
+def p_expresion_length(p):
+    'expresion : expresion PUNTO LENGTH'
+    params = get_params(p)
+    p[0] = Length(params.line, params.column, p[1])
 
 
 def p_expresion_acceso(p):

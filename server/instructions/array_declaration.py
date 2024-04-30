@@ -19,7 +19,16 @@ class ArrayDeclaration(Instruction):
             return
         
         name_id = f'arr_{gen.new_temp()}'
-        gen.variable_data(name_id, 'word', ', '.join(arr_value.value))
-        gen.variable_data(f'{name_id}_length', 'word', len(arr_value.value))
+        gen.variable_data(name_id, 'space', 100)
+        gen.variable_data(f'{name_id}_len', 'word', len(arr_value.value))
+        gen.add_br()
+        gen.add_la('t0', name_id)
+
+        for value in arr_value.value:
+            gen.add_br()
+            gen.add_li('t3', value)
+            gen.add_sw('t3', '0(t0)')
+            gen.add_operation('addi', 't0', 't0', '4')
+
         sym = Symbol(self.line, self.col, self.id, arr_value.type, name_id)
         env.save_variable(ast, self.id, sym, self.line, self.col, self.declaration_type)

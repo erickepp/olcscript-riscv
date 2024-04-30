@@ -76,8 +76,8 @@ class ConsoleLog(Instruction):
         end_loop_lbl = gen.new_label()
 
         gen.add_la('t0', value)
-        gen.add_lw('t1', f'{value}_length')
-        gen.add_li('t2', 0)
+        gen.add_lw('t1', f'{value}_len')
+        gen.add_li('t2', '0')
 
         gen.add_br()
         gen.add_li('a0', '91')
