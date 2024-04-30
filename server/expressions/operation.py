@@ -11,34 +11,6 @@ class Operation(Expression):
         self.opL = opL
         self.opR = opR
 
-    def get_dominant_type(self, op1, op2):
-        if self.operador in ['+', '-', '*', '/', '%']:
-            if op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.NUMBER:
-                return ExpressionType.NUMBER
-            elif op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.FLOAT:
-                return ExpressionType.FLOAT
-            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.FLOAT:
-                return ExpressionType.FLOAT
-            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.NUMBER:
-                return ExpressionType.FLOAT
-            elif op1.type == ExpressionType.STRING and op2.type == ExpressionType.STRING:
-                return ExpressionType.STRING
-        elif self.operador in ['==', '!=', '>', '>=', '<', '<=']:
-            if op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.NUMBER:
-                return ExpressionType.BOOLEAN
-            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.FLOAT:
-                return ExpressionType.BOOLEAN
-            elif op1.type == ExpressionType.BOOLEAN and op2.type == ExpressionType.BOOLEAN:
-                return ExpressionType.BOOLEAN
-            elif op1.type == ExpressionType.STRING and op2.type == ExpressionType.STRING:
-                return ExpressionType.BOOLEAN
-            elif op1.type == ExpressionType.CHAR and op2.type == ExpressionType.CHAR:
-                return ExpressionType.BOOLEAN
-        elif self.operador in ['&&', '||']:
-            if op1.type == ExpressionType.BOOLEAN and op2.type == ExpressionType.BOOLEAN:
-                return ExpressionType.BOOLEAN
-        return ExpressionType.NULL
-
     def ejecutar(self, ast, env, gen):
         op1 = self.opL.ejecutar(ast, env, gen)
         op2 = self.opR.ejecutar(ast, env, gen)
@@ -48,23 +20,23 @@ class Operation(Expression):
         if dominant_type != ExpressionType.NULL:
             if dominant_type in [ExpressionType.NUMBER, ExpressionType.BOOLEAN]:
                 gen.add_br()
-                gen.add_li('t3', op1.value) 
+                self.handle_registers(gen, op1.value)
                 gen.add_lw('t1', '0(t3)')
-                gen.add_li('t3', op2.value) 
+                self.handle_registers(gen, op2.value)
                 gen.add_lw('t2', '0(t3)')
                 gen.add_br()
             elif dominant_type == ExpressionType.FLOAT:
                 gen.add_br()
                 if op1.type == ExpressionType.NUMBER:
-                    gen.add_li('t3', op1.value) 
+                    self.handle_registers(gen, op1.value) 
                     gen.add_lw('t0', '0(t3)')   
                     gen.add_fcvt_s_w('fa1', 't0')
                 else:
                     gen.add_flw('fa1', op1.value, 't0')
                 if op2.type == ExpressionType.NUMBER:
-                        gen.add_li('t3', op2.value) 
-                        gen.add_lw('t0', '0(t3)') 
-                        gen.add_fcvt_s_w('fa2', 't0')
+                    self.handle_registers(gen, op2.value)
+                    gen.add_lw('t0', '0(t3)')
+                    gen.add_fcvt_s_w('fa2', 't0')
                 else:
                     gen.add_flw('fa2', op2.value, 't0')
                 gen.add_br()
@@ -195,7 +167,7 @@ class Operation(Expression):
         elif op1.type != ExpressionType.NULL and op2.type == ExpressionType.NULL:
             if op1.type in [ExpressionType.NUMBER, ExpressionType.BOOLEAN]:
                 gen.add_br()
-                gen.add_li('t3', op1.value) 
+                self.handle_registers(gen, op1.value)
                 gen.add_lw('t1', '0(t3)')
                 gen.add_br()
             elif op1.type == ExpressionType.FLOAT:
@@ -229,3 +201,37 @@ class Operation(Expression):
         ast.set_errors(f'Tipos incorrectos para aplicar el operador ({self.operador}).',
                        self.line, self.col, 'Semántico')
         return Value('', ExpressionType.NULL)
+
+    def get_dominant_type(self, op1, op2):
+        if self.operador in ['+', '-', '*', '/', '%']:
+            if op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.NUMBER:
+                return ExpressionType.NUMBER
+            elif op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.FLOAT:
+                return ExpressionType.FLOAT
+            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.FLOAT:
+                return ExpressionType.FLOAT
+            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.NUMBER:
+                return ExpressionType.FLOAT
+            elif op1.type == ExpressionType.STRING and op2.type == ExpressionType.STRING:
+                return ExpressionType.STRING
+        elif self.operador in ['==', '!=', '>', '>=', '<', '<=']:
+            if op1.type == ExpressionType.NUMBER and op2.type == ExpressionType.NUMBER:
+                return ExpressionType.BOOLEAN
+            elif op1.type == ExpressionType.FLOAT and op2.type == ExpressionType.FLOAT:
+                return ExpressionType.BOOLEAN
+            elif op1.type == ExpressionType.BOOLEAN and op2.type == ExpressionType.BOOLEAN:
+                return ExpressionType.BOOLEAN
+            elif op1.type == ExpressionType.STRING and op2.type == ExpressionType.STRING:
+                return ExpressionType.BOOLEAN
+            elif op1.type == ExpressionType.CHAR and op2.type == ExpressionType.CHAR:
+                return ExpressionType.BOOLEAN
+        elif self.operador in ['&&', '||']:
+            if op1.type == ExpressionType.BOOLEAN and op2.type == ExpressionType.BOOLEAN:
+                return ExpressionType.BOOLEAN
+        return ExpressionType.NULL
+
+    def handle_registers(self, gen, value):
+        if 't' in value:
+            gen.add_move('t3', value)
+        else:
+            gen.add_li('t3', value)

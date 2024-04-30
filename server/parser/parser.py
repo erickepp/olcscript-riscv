@@ -5,9 +5,12 @@ from environment.types import ExpressionType
 from expressions.primitive import Primitive
 from expressions.operation import Operation
 from expressions.access import Access
+from expressions.array import Array
+from expressions.array_access import ArrayAccess
 
 from instructions.declaration import Declaration
 from instructions.assignment import Assignment
+from instructions.array_declaration import ArrayDeclaration
 from instructions.console_log import ConsoleLog
 
 class codeParams:
@@ -72,7 +75,6 @@ tokens = [
     'PARDER',
     'CORIZQ',
     'CORDER',
-    'INTDER',
     'MAS',
     'MENOS',
     'POR',
@@ -109,7 +111,6 @@ t_PARIZQ     = r'\('
 t_PARDER     = r'\)'
 t_CORIZQ     = r'\['
 t_CORDER     = r'\]'
-t_INTDER     = r'\?'
 t_MAS        = r'\+'
 t_MENOS      = r'-'
 t_POR        = r'\*'
@@ -254,9 +255,26 @@ def p_instruccion_declaracion(p):
 
 
 def p_instruccion_asignacion(p):
-    'instruccion : acceso IGUAL expresion PTCOMA'
+    'instruccion : ID IGUAL expresion PTCOMA'
     params = get_params(p)
     p[0] = Assignment(params.line, params.column, p[1], p[3])
+
+
+def p_instruccion_declaracion_array(p):
+    '''instruccion : VAR ID DOSPTS tipo_dato CORIZQ CORDER IGUAL expresion PTCOMA
+                   | CONST ID DOSPTS tipo_dato CORIZQ CORDER IGUAL expresion PTCOMA'''
+    params = get_params(p)
+    p[0] = ArrayDeclaration(params.line, params.column, p[1], p[2], p[4], p[8])
+
+
+def p_expresion_array(p):
+    '''expresion : CORIZQ lista_expresiones CORDER
+                 | CORIZQ CORDER'''
+    params = get_params(p)
+    if len(p) > 3:
+        p[0] = Array(params.line, params.column, p[2])
+    else:
+        p[0] = Array(params.line, params.column, [])
 
 
 def p_expresion_acceso(p):
@@ -264,7 +282,7 @@ def p_expresion_acceso(p):
               | ID'''
     params = get_params(p)
     if len(p) > 2:
-        pass
+        p[0] = ArrayAccess(params.line, params.column, p[1], p[3])
     else:
         p[0] = Access(params.line, params.column, p[1])
 
