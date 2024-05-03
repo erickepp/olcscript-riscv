@@ -10,12 +10,14 @@ from expressions.array_access import ArrayAccess
 from expressions.pop import Pop
 from expressions.index_of import IndexOf
 from expressions.length import Length
+from expressions.break_statement import Break
 
 from instructions.declaration import Declaration
 from instructions.assignment import Assignment
 from instructions.array_declaration import ArrayDeclaration
 from instructions.push import Push
 from instructions.if_instruction import If
+from instructions.switch_instruction import Switch
 from instructions.console_log import ConsoleLog
 
 class codeParams:
@@ -338,6 +340,37 @@ def p_else(p):
         p[0] = p[3]
     else:
         p[0] = None
+
+
+def p_instruccion_switch(p):
+    'instruccion : SWITCH PARIZQ expresion PARDER LLAVIZQ lista_case default LLAVDER'
+    params = get_params(p)
+    p[0] = Switch(params.line, params.column, p[3], p[6], p[7])
+
+
+def p_lista_case(p):
+    '''lista_case : lista_case CASE expresion DOSPTS instrucciones
+                  |'''
+    if len(p) > 1:
+        p[1].append({'expression': p[3], 'block': p[5]})
+        p[0] = p[1]
+    else:
+        p[0] = []
+
+
+def p_default(p):
+    '''default : DEFAULT DOSPTS instrucciones
+               |'''
+    if len(p) > 1:
+        p[0] = p[3]
+    else:
+        p[0] = None
+
+
+def p_instruccion_break(p):
+    'instruccion : BREAK PTCOMA'
+    params = get_params(p)
+    p[0] = Break(params.line, params.column)
 
 
 def p_instruccion_console_log(p):
